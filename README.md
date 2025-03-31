@@ -4,15 +4,41 @@ Andreas V. Copan, Kevin B. Moore III, Sarah N. Elliott, and Stephen J. Klippenst
 
 ## Description
 
-This repository includes four modules:
- - AutoMol: A library for manipulating and interconverting molecular descriptors
- - PhyDat: A small, supporting library of physical constants and chemical data
- - [MolSym](molsym/README.md): An externally-developed package for handling molecular
- symmetry, by Stephen M. Goodlett and Nathaniel L. Kitzmiller (see
- [here](molsym/README.md) for details)
+This repository is a clean-up version of
+[AutoChem](https://github.com/avcopan/autochem), which implements the
+cheminformatics routines used by the AutoMech project.
 
-The central module is AutoMol, which provides an extensive library of functions for
-working with various molecular descriptors, including:
+It consists of two primary modules:
+ - AutoChem: A library for manipulating and interconverting kinetic and thermochemical data formats.
+ - AutoMol: A library for manipulating and interconverting molecular representations.
+
+Also included in this repository is [MolSym](molsym/README.md), an
+externally-developed package for handling molecular symmetry, by Stephen M.
+Goodlett and Nathaniel L. Kitzmiller (see [here](molsym/README.md) for details).
+
+
+## Installation
+
+After installing [Pixi](https://pixi.sh/latest/) [^1], you can run the following to install the code in developer mode.
+```
+pixi install
+```
+You can test your installation by running `pytest autochem` and `pytest automol`.
+
+## AutoChem
+
+This is a prototype of a planned revision of AutoMech's code for handling kinetic and thermochemical data. So far, it implements storage of raw Rate Constant data, as well as all of the major parametrizations used by simulation codes like Chemkin and Cantera.
+
+
+### Demo
+
+[FILL THIS IN]
+
+
+## AutoMol
+
+Automol provides an extensive library of functions for working with various
+molecular descriptors, including:
  - Molecular graphs (molecules and transition states): `automol.graph`
  - Cartesian geometries (molecules and transition states): `automol.geom`
  - Z-matrix geometries (molecules and transition states): `automol.zmat`
@@ -29,11 +55,6 @@ Other notable functionalities include...
  - Reaction mapping for combustion reaction classes: `automol.reac`
  - Stereochemistry handling for molecules **and transition states**: `automol.graph.expand_stereo()`
  - Geometry embedding for molecules **and transition states**: `automol.graph.geometry()`
-
-
-## Installation
-
-## Basic Usage
 
 ### Molecules
 
@@ -131,7 +152,7 @@ bonds:
   2-4: {order: 0, stereo_parity: null}
   2-5: {order: 1, stereo_parity: null}
 ```
-We can see the connectivity more easily by displaying the graph.[^1]
+We can see the connectivity more easily by displaying the graph.[^2]
 ```
 >>> automol.graph.display(zgra, exp=True, label=True)
 ```
@@ -230,11 +251,13 @@ AMChI=1/C4H9O3/c1-3-6-4(2)7-5-8-3/h3-4H,1-2H3/t3-,4-/m1/s1/k8-5/f8-3/r1
 Standard chemical identifiers like SMILES and InChI cannot describe individual
 transition states.
 AutoMol comes with its own string identifier for this purpose, the AMChI ("AutoMech
-Chemical Identifier").[^2]
+Chemical Identifier").[^3]
 
 
 <!-- Footnotes -->
 
-[^1]: Dummy atoms are represented as Helium atoms for RDKit display.
+[^1]: Pixi installation command: `curl -fsSL https://pixi.sh/install.sh | sh`
 
-[^2]: See Copan, Moore, Elliott, Mulvihill, Pratali Maffei, Klippenstein. J. Phys. Chem. A 2024, 128, 18, 3711–3725
+[^2]: Dummy atoms are represented as Helium atoms for RDKit display.
+
+[^3]: See Copan, Moore, Elliott, Mulvihill, Pratali Maffei, Klippenstein. J. Phys. Chem. A 2024, 128, 18, 3711–3725
