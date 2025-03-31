@@ -1,16 +1,91 @@
 [project]
 authors = [{name = "Andreas Copan", email = "avcopan@gmail.com"}]
-description = "Add a short description here"
 name = "autochem"
 requires-python = ">= 3.11"
-version = "2025.2.7"
+version = "2025.3.31"
+dependencies = ["pip", "pylint", "pytest", "black", "ruff", "mypy", "sphinx", "myst-parser", "sphinx-book-theme", "sphinx-autodoc-typehints", "pytest-xdist[psutil]", "pre-commit"]
 
 [build-system]
 build-backend = "hatchling.build"
 requires = ["hatchling"]
 
 [tool.hatch.build.targets.sdist]
-include = ["autochem", "automol", "autoreact", "phydat", "molsym"]
+include = ["autochem", "automol", "phydat", "molsym"]
 
 [tool.hatch.build.targets.wheel]
-include = ["autochem", "automol", "autoreact", "phydat", "molsym"]
+include = ["autochem", "automol", "phydat", "molsym"]
+
+[tool.pixi.project]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+autochem = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+python = "3.11.*"
+# AutoChem dependencies
+ipython = "8.15.*"
+ipywidgets = "*"
+jupyter = "*"
+more-itertools = "*"
+networkx = "3.3.*"
+numpy = "1.26.*"
+py3dmol = "*"
+pyparsing = "*"
+pyyaml = "*"
+qcelemental = "*"
+rdkit = "*"
+scipy = "1.12.*"
+xarray = "2023.8.*"
+altair-all = ">=5.5.0,<6"
+
+[tool.pixi.system-requirements]
+linux="3.10"
+libc = { family="glibc", version="2.17" }
+
+# tools
+[tool.black]
+target-version = ["py310", "py311", "py312"]
+
+[tool.ruff]
+target-version = "py311"
+extend-select = [
+    "E",      # style errors
+    "F",      # flakes
+    "D",      # pydocstyle
+    "I001",   # isort
+    "UP",     # pyupgrade
+    "N",      # pep8-naming
+    "C",      # flake8-comprehensions
+    "B",      # flake8-bugbear
+    "A001",   # flake8-builtins
+    "RUF",    # ruff-specific rules
+    "RUF100", # Unused noqa directive
+]
+extend-ignore = [
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D103", # Missing docstring in public function
+    "D107", # Missing docstring in __init__
+    "D203", # 1 blank line required before class docstring
+    "D205", # 1 blank line required between summary line and description
+    "D212", # Multi-line docstring summary should start at the first line
+    "D213", # Multi-line docstring summary should start at the second line
+    "D413", # Missing blank line after last section
+    "D416", # Section name should end with a colon
+    "N806", # Variable in function should be lowercase
+    "C901", # Too complex
+    # "RUF022", # Unsorted __all__
+]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+show_error_codes = true
+follow_imports = "skip"
+ignore_errors = true
