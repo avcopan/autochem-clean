@@ -27,6 +27,17 @@ from ._00func import (
     chemkin_aux_lines as blending_function_chemkin_aux_lines,
 )
 
+COLOR_SEQUENCE = [
+    "#0066ff",  # blue
+    "#ff0000",  # red
+    "#1ab73a",  # green
+    "#ef7810",  # orange
+    "#8533ff",  # purple
+    "#d0009a",  # pink
+    "#ffcd00",  # yellow
+    "#916e6e",  # brown
+]
+
 
 class RateConstant(UnitManager, Frozen, Scalable, SubclassTyped, abc.ABC):
     """Abstract base class for rate constants."""
@@ -124,6 +135,7 @@ class RateConstant(UnitManager, Frozen, Scalable, SubclassTyped, abc.ABC):
         assert len(others) == len(labels), f"{labels} !~ {others}"
         all_ks = [self, *others]
         all_labels = [label, *labels]
+        all_colors = COLOR_SEQUENCE[: len(all_labels)]
 
         # Gether data from functons
         t = numpy.linspace(*t_range, num=500)
@@ -147,7 +159,13 @@ class RateConstant(UnitManager, Frozen, Scalable, SubclassTyped, abc.ABC):
             .scale(type="log")
             .axis(format=".1e", values=y_vals)
         )
-        color = "key:N" if others else altair.Undefined
+        color = (
+            altair.Color(
+                "key:N", scale=altair.Scale(domain=all_labels, range=all_colors)
+            )
+            if others
+            else altair.value(all_colors[0])
+        )
 
         # Create chart
         return (
