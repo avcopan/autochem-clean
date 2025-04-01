@@ -27,13 +27,134 @@ You can test your installation by running `pytest autochem` and `pytest automol`
 
 ## AutoChem
 
-This is a prototype of a planned revision of AutoMech's code for handling kinetic and thermochemical data. So far, it implements storage of raw Rate Constant data, as well as all of the major parametrizations used by simulation codes like Chemkin and Cantera.
+This is a prototype of a planned revision of AutoMech's code for handling
+kinetic and thermochemical data. So far, it implements handling of raw or
+parametrized Rate constant data, which can be found in `autochem.rate`.
+Unit handling is implemented in `autochem.unit_`, which is currently used for
+rate constant data but will eventually be used for thermochemical data as well.
 
+### Rates
 
-### Demo
+*Data storage.*
+One can generate a new rate constant object from a Chemkin string as follows.
+```
+>>> import autochem as ac
+>>> 
+>>> rate = ac.rate.from_chemkin_string(
+>>>     """
+>>>     C2H4+OH=PC2H4OH          2.560E+36    -7.752     6946
+>>>         PLOG /   1.000E-02   1.740E+43   -10.460     7699 /
+>>>         PLOG /   2.500E-02   3.250E+37    -8.629     5215 /
+>>>         PLOG /   1.000E-01   1.840E+35    -7.750     4909 /
+>>>         PLOG /   1.000E+00   2.560E+36    -7.752     6946 /
+>>>         PLOG /   1.000E+01   3.700E+33    -6.573     7606 /
+>>>         PLOG /   1.000E+02   1.120E+26    -4.101     5757 /
+>>>     """,
+>>>     units={"energy": "cal"},
+>>> )
+>>> rate.model_dump()
+{
+    "reactants": ["C2H4", "OH"],
+    "products": ["PC2H4OH"],
+    "reversible": True,
+    "rate_constant": {
+        "order": 2,
+        "efficiencies": {},
+        "As": [1.74e43, 3.25e37, 1.84e35, 2.56e36, 3.7e33, 1.12e26],
+        "bs": [-10.46, -8.629, -7.75, -7.752, -6.573, -4.101],
+        "Es": [7699.0, 5215.0, 4909.0, 6946.0, 7606.0, 5757.0],
+        "ps": [0.01, 0.025, 0.1, 1.0, 10.0, 100.0],
+        "type": "plog"
+    }
+}
+```
+This `Rate` object is a Pydantic model that includes all of the information
+needed to add this rate a kinetic mechanism for simulation, including the
+reactants and products, whether or not the reaction is reversible, and the rate
+constant.
+The `rate_constant` attribute stores either raw rate constant data or a rate
+constant parametrization, using one of several specific `RateConstant` types.
+In this case, it stores a `PlogRateConstant`.
+```
+>>> rate.rate_constant
+PlogRateConstant(order=2, efficiencies={}, ..., type='plog')
+```
+The dictionary above can be used to instantiate a new object.
+```
+>>> rate_dct = <dictionary from above>
+>>> ac.rate.Rate.model_validate(rate_dct)
+Rate(reactants=..., rate_constant=PlogRateConstant(...))
+```
+This allows one to, for example, store rate constant data in JSON files with
+minimal hassle.
 
-[FILL THIS IN]
+*Scalar multiplication.*
+Rate objects can be multiplied by scalars.
+```
+>>> doubled_rate = 2 * rate
+>>> doubled_rate.rate_constant.model_dump()
+{
+    "order": 2,
+    "efficiencies": {},
+    "As": [3.48e43, 6.5e37, 3.68e35, 5.12e36, 7.4e33, 2.24e26],
+    "bs": [-10.46, -8.629, -7.75, -7.752, -6.573, -4.101],
+    "Es": [7699.0, 5215.0, 4909.0, 6946.0, 7606.0, 5757.0],
+    "ps": [0.01, 0.025, 0.1, 1.0, 10.0, 100.0],
+    "type": "plog",
+}
+```
 
+*Plotting.* One can generate Arrhenius plots of rate constants using the
+function `autochem.rate.display`.
+```
+>>> ac.rate.display(rate)
+```
+<img src=".github/plog-rate.svg" width="400">
+
+For convenience, one can also plot multiple rates against each other with a legend.
+```
+>>> doubled_rate = 2 * rate
+>>> halved_rate = 0.5 * rate
+
+>>> ac.rate.display(
+>>>     rate,
+>>>     label="original",
+>>>     comp_rates=[doubled_rate, halved_rate],
+>>>     comp_labels=["doubled", "halved"],
+>>> )
+```
+<img src=".github/plog-rate-comparison.svg" width="400">
+
+*Units.* Above, we assumed that the rate constant data matches the internal units used by AutoChem, which are as follows (see `autochem.unit_.system`):
+ - time: s
+ - temperature: K
+ - length: cm
+ - substance: mol
+ - pressure: atm
+ - energy: cal
+
+When this is not the case, one can specify units for each of the dimensions
+listed above.
+For example, the activation energies might be given in kcal.
+```
+>>> import autochem as ac
+>>> 
+>>> rate = ac.rate.from_chemkin_string(
+>>>     """
+>>>     C2H4+OH=PC2H4OH          2.560E+36    -7.752     6.946
+>>>         PLOG /   1.000E-02   1.740E+43   -10.460     7.699 /
+>>>         PLOG /   2.500E-02   3.250E+37    -8.629     5.215 /
+>>>         PLOG /   1.000E-01   1.840E+35    -7.750     4.909 /
+>>>         PLOG /   1.000E+00   2.560E+36    -7.752     6.946 /
+>>>         PLOG /   1.000E+01   3.700E+33    -6.573     7.606 /
+>>>         PLOG /   1.000E+02   1.120E+26    -4.101     5.757 /
+>>>     """,
+>>>     units={"energy": "kcal"}
+>>> )
+>>> rate.model_dump()
+<dictionary from above>
+```
+Under the hood, the [Pint](https://pint.readthedocs.io/) library is used for unit handling.
 
 ## AutoMol
 

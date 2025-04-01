@@ -123,9 +123,9 @@ def test__from_chemkin_string(name, data, check_roundtrip: bool):
         assert k == k_, f"\n   {k}\n!= {k_}"
 
     # Plot against another rate
-    copm_units = SIMPLE.get("units")
-    copm_chem_str = SIMPLE.get("chemkin")
-    comp_k = rate.from_chemkin_string(copm_chem_str, units=copm_units)
+    comp_units = SIMPLE.get("units")
+    comp_chem_str = SIMPLE.get("chemkin")
+    comp_k = rate.from_chemkin_string(comp_chem_str, units=comp_units)
     rate.display(k, comp_rates=[comp_k], comp_labels=["comp"])
 
 

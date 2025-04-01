@@ -14,6 +14,7 @@ from .system import UNITS, Dimension, Units, UnitsData
 
 
 class UnitManager(Frozen, abc.ABC):
+    """Convert input units to internal unit system based on dimensions."""
 
     _dimensions: ClassVar[dict[str, Dimension]]
 
