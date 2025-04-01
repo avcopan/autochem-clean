@@ -28,10 +28,8 @@ You can test your installation by running `pytest autochem` and `pytest automol`
 ## AutoChem
 
 This is a prototype of a planned revision of AutoMech's code for handling
-kinetic and thermochemical data. So far, it implements handling of raw or
-parametrized Rate constant data, which can be found in `autochem.rate`.
-Unit handling is implemented in `autochem.unit_`, which is currently used for
-rate constant data but will eventually be used for thermochemical data as well.
+kinetic and thermochemical data.
+So far, it only implements handling of rate constant data, which can be found in `autochem.rate`.
 
 ### Rates
 
