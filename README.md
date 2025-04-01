@@ -69,11 +69,11 @@ One can generate a new rate constant object from a Chemkin string as follows.
 }
 ```
 This `Rate` object is a Pydantic model that includes all of the information
-needed to add this rate a kinetic mechanism for simulation, including the
+needed to add this rate to a kinetic mechanism for simulation, including the
 reactants and products, whether or not the reaction is reversible, and the rate
 constant.
 The `rate_constant` attribute stores either raw rate constant data or a rate
-constant parametrization, using one of several specific `RateConstant` types.
+constant parametrization, using one of several specific `RateConstant` subtypes.
 In this case, it stores a `PlogRateConstant`.
 ```
 >>> rate.rate_constant
@@ -85,11 +85,11 @@ The dictionary above can be used to instantiate a new object.
 >>> ac.rate.Rate.model_validate(rate_dct)
 Rate(reactants=..., rate_constant=PlogRateConstant(...))
 ```
-This allows one to, for example, store rate constant data in JSON files with
+This allows one to, for example, retrieve stored rate constant data from JSON files with
 minimal hassle.
 
 *Scalar multiplication.*
-Rate objects can be multiplied by scalars.
+Rate objects can also be multiplied by scalars.
 ```
 >>> doubled_rate = 2 * rate
 >>> doubled_rate.rate_constant.model_dump()
