@@ -109,7 +109,7 @@ function `autochem.rate.display`.
 ```
 >>> ac.rate.display(rate)
 ```
-<img src=".github/plog-rate.svg" width="400">
+<img src=".github/plog-rate.svg" height="360">
 
 For convenience, one can also plot multiple rates against each other with a legend.
 ```
@@ -123,7 +123,7 @@ For convenience, one can also plot multiple rates against each other with a lege
 >>>     comp_labels=["doubled", "halved"],
 >>> )
 ```
-<img src=".github/plog-rate-comparison.svg" width="400">
+<img src=".github/plog-rate-comparison.svg" height="360">
 
 *Units.* Above, we assumed that the rate constant data matches the internal units used by AutoChem, which are as follows (see `autochem.unit_.system`):
  - time: s
